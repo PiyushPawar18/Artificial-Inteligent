@@ -84,7 +84,7 @@ class NQueenApp:
         if self.canvas:
             self.canvas.destroy()
         
-        self.canvas = tk.Canvas(self.root, width=600, height=600, bg='white')
+        self.canvas = tk.Canvas(self.root, width=300, height=300, bg='white')
         self.canvas.grid(row=7, column=0, columnspan=2, padx=10, pady=10)
         
         self.board = [[0] * self.size for _ in range(self.size)]
@@ -95,7 +95,7 @@ class NQueenApp:
     def draw_board(self):
         if self.canvas:
             self.canvas.delete("all")
-            cell_size = 600 // self.size
+            cell_size = 300 // self.size
             for row in range(self.size):
                 for col in range(self.size):
                     x1 = col * cell_size
@@ -111,7 +111,7 @@ class NQueenApp:
         if not self.canvas:
             return
         
-        cell_size = 600 // self.size
+        cell_size = 300 // self.size
         col = event.x // cell_size
         row = event.y // cell_size
 
@@ -165,7 +165,7 @@ class NQueenApp:
             return
 
         self.canvas.delete("all")
-        cell_size = 600 // self.size
+        cell_size =300 // self.size
         for row in range(self.size):
             for col in range(self.size):
                 x1 = col * cell_size

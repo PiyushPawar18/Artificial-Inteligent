@@ -13,8 +13,10 @@ blocks = 0
 shots = 0
 max_shots = 10  # Game ends after 10 shots
 
-# Load the football image
+# Load images
 football_image = tk.PhotoImage(file="football360.png")
+goal_image = tk.PhotoImage(file="footballnet.png")
+goalkeeper_image = tk.PhotoImage(file="goalkeeper.png")  # Load the goalkeeper image
 
 # Create labels and buttons
 info_label = tk.Label(root, text="Choose your shot: Left, Center, or Right", font=("Arial", 14))
@@ -26,16 +28,17 @@ result_label.pack(pady=20)
 score_label = tk.Label(root, text=f"Goals: {goals} | Blocks: {blocks} | Shots: {shots}/{max_shots}", font=("Arial", 16))
 score_label.pack(pady=20)
 
-canvas = tk.Canvas(root, width=700, height=300, bg="green")
+canvas = tk.Canvas(root, width=800, height=400, bg="green")
 canvas.pack()
 
 # Draw the goal area and add a net image
-goal_image = tk.PhotoImage(file="footballnet.png")  # Add your net image here
 canvas.create_image(350, 150, image=goal_image)
 
 # Replace the ball with the football image
 ball = canvas.create_image(350, 290, image=football_image)
-goalkeeper = canvas.create_rectangle(320, 50, 380, 130, fill="blue")
+
+# Create a goalkeeper image on the canvas
+goalkeeper = canvas.create_image(350, 90, image=goalkeeper_image)  # Adjust the position as needed
 
 def reset_game():
     global goals, blocks, shots
@@ -45,7 +48,7 @@ def reset_game():
     update_score()
     result_label.config(text="")
     canvas.coords(ball, 350, 290)
-    canvas.coords(goalkeeper, 320, 50, 380, 130)
+    canvas.coords(goalkeeper, 350, 90)  # Reset goalkeeper position
 
 def update_score():
     score_label.config(text=f"Goals: {goals} | Blocks: {blocks} | Shots: {shots}/{max_shots}")
@@ -105,7 +108,7 @@ def shoot(direction):
 
 def reset_ball():
     canvas.coords(ball, 350, 290)
-    canvas.coords(goalkeeper, 320, 50, 380, 130)
+    canvas.coords(goalkeeper, 350, 90)  # Reset goalkeeper position
 
 # Create buttons for user to choose
 button_frame = tk.Frame(root)

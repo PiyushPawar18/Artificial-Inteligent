@@ -13,6 +13,9 @@ blocks = 0
 shots = 0
 max_shots = 10  # Game ends after 10 shots
 
+# Track the number of shots the user makes in each direction
+user_shots = {"Left": 0, "Center": 0, "Right": 0}
+
 # Load images
 football_image = tk.PhotoImage(file="football360.png")
 goal_image = tk.PhotoImage(file="footballnet.png")
@@ -41,10 +44,11 @@ ball = canvas.create_image(350, 290, image=football_image)
 goalkeeper = canvas.create_image(350, 90, image=goalkeeper_image)  # Adjust the position as needed
 
 def reset_game():
-    global goals, blocks, shots
+    global goals, blocks, shots, user_shots
     goals = 0
     blocks = 0
     shots = 0
+    user_shots = {"Left": 0, "Center": 0, "Right": 0}  # Reset shot counts
     update_score()
     result_label.config(text="")
     canvas.coords(ball, 350, 290)
@@ -67,6 +71,22 @@ def animate_goalkeeper(gk_x):
         root.update()
         time.sleep(0.05)
 
+def weighted_goalkeeper_choice():
+    total_shots = sum(user_shots.values())
+    
+    # Assign higher weight to where the user shoots most often
+    if total_shots == 0:
+        return random.choice(["Left", "Center", "Right"])  # Random choice if no shots taken yet
+    
+    weights = {
+        "Left": (user_shots["Left"] + 1) / (total_shots + 3),
+        "Center": (user_shots["Center"] + 1) / (total_shots + 3),
+        "Right": (user_shots["Right"] + 1) / (total_shots + 3)
+    }
+    
+    # Randomly choose with probability based on past shots
+    return random.choices(["Left", "Center", "Right"], weights=[weights["Left"], weights["Center"], weights["Right"]])[0]
+
 def shoot(direction):
     global goals, blocks, shots
     
@@ -74,23 +94,15 @@ def shoot(direction):
         result_label.config(text="Game Over! Click Reset to play again.", fg="red")
         return
 
-    # Goalkeeper randomly chooses a side
-    goalkeeper_choice = random.choice(["Left", "Center", "Right"])
+    # Update the shot count for the user's direction
+    user_shots[direction] += 1
+    
+    # Goalkeeper chooses a side based on weighted probabilities
+    goalkeeper_choice = weighted_goalkeeper_choice()
     
     # Determine ball and goalkeeper positions
-    if direction == "Left":
-        goal_x = 150
-    elif direction == "Center":
-        goal_x = 350
-    else:  # "Right"
-        goal_x = 550
-    
-    if goalkeeper_choice == "Left":
-        gk_x = 150
-    elif goalkeeper_choice == "Center":
-        gk_x = 350
-    else:  # "Right"
-        gk_x = 550
+    goal_x = 150 if direction == "Left" else 350 if direction == "Center" else 550
+    gk_x = 150 if goalkeeper_choice == "Left" else 350 if goalkeeper_choice == "Center" else 550
     
     animate_goalkeeper(gk_x)
     animate_ball(goal_x)
